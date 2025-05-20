@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Basics Quiz</title>
+    <style>
+        :root {
+            --primary: #3776ab;
+            --secondary: #ffd43b;
+            --dark: #2b2b2b;
+            --light: #f5f5f5;
+            --correct: #4caf50;
+            --incorrect: #f44336;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+        
+        .quiz-section {
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: var(--primary);
+            border-left: 5px solid var(--secondary);
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+        
+        .question {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            line-height: 25px;
+        }
+        
+        .options {
+            margin-left: 35px;
+        }
+        
+        .option {
+            margin: 10px 0;
+        }
+        
+        label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .coding-task {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+        }
+        
+        .blank {
+            border-bottom: 1px solid var(--primary);
+            padding: 0 5px;
+            min-width: 80px;
+            display: inline-block;
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 30px auto 0;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #2a5f8a;
+        }
+        
+        .result {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .correct {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--correct);
+        }
+        
+        .incorrect {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--incorrect);
+        }
+        
+        .explanation {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .user-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f0f8ff;
+            border-radius: 5px;
+        }
+        
+        .user-info input {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Python Basics Quiz</h1>
+        
+        <div class="user-info">
+            <h3>Your Information</h3>
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+        </div>
+        
+        <div class="quiz-section">
+            <h2>Multiple Choice Questions</h2>
+            
+            <!-- MCQ questions 1-10 same as before -->
+            <!-- ... -->
+            
+        </div>
+        
+        <div class="quiz-section">
+            <h2>Coding Tasks</h2>
+            
+            <!-- Coding tasks 1-3 same as before -->
+            <!-- ... -->
+            
+        </div>
+        
+        <button id="submit-btn">Submit Quiz</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // Google Apps Script endpoint
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxK-NFaZfR8MIBWobR3PZaTZb5GX9wtTXfnIkNvjgZiwF8vigoXrHP7yKE1NiEECm3R/exec';
+        
+        document.getElementById('submit-btn').addEventListener('click', function() {
+            // Collect user info
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            if (!name || !email) {
+                alert('Please enter your name and email');
+                return;
+            }
+            
+            // Collect MCQ answers
+            const mcqAnswers = {};
+            for (let i = 1; i <= 10; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                mcqAnswers[`q${i}`] = selected ? selected.value : 'Not answered';
+            }
+            
+            // Collect coding task answers
+            const codingAnswers = {};
+            const blanks = document.querySelectorAll('.blank');
+            codingAnswers.task1 = blanks[0].textContent.trim();
+            codingAnswers.task2_part1 = blanks[1].textContent.trim();
+            codingAnswers.task2_part2 = blanks[2].textContent.trim();
+            codingAnswers.task3_part1 = blanks[3].textContent.trim();
+            codingAnswers.task3_part2 = blanks[4].textContent.trim();
+            
+            // Calculate score (same as before)
+            const answers = {
+                q1: 'C', q2: 'B', q3: 'C', q4: 'B', q5: 'B',
+                q6: 'D', q7: 'B', q8: 'B', q9: 'C', q10: 'D'
+            };
+            
+            let score = 0;
+            const totalMCQ = 10;
+            
+           c
