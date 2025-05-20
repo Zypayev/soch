@@ -337,9 +337,9 @@
         <div id="result" class="result"></div>
     </div>
 
-    <script>
+     <script>
         // Google Apps Script endpoint
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxuVBWaqQxlWzDAoVdH5mQSw6LpRGCIBM5PTP5jFVIU8ddrtHTl37DiXUstaaRJq_Rxrg/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxK-NFaZfR8MIBWobR3PZaTZb5GX9wtTXfnIkNvjgZiwF8vigoXrHP7yKE1NiEECm3R/exec';
         
         document.getElementById('submit-btn').addEventListener('click', function() {
             // Collect user info
@@ -376,4 +376,128 @@
             let score = 0;
             const totalMCQ = 10;
             
-           c
+            for (let i = 1; i <= totalMCQ; i++) {
+                if (mcqAnswers[`q${i}`] === answers[`q${i}`]) {
+                    score++;
+                }
+            }
+            
+            const codingAnswersCheck = {
+                task1: ['name'],
+                task2: ['color', 'color'],
+                task3: ['Tk', 'mainloop']
+            };
+            
+            let codingScore = 0;
+            
+            if (codingAnswers.task1 === codingAnswersCheck.task1[0]) codingScore++;
+            if (codingAnswers.task2_part1 === codingAnswersCheck.task2[0] && 
+                codingAnswers.task2_part2 === codingAnswersCheck.task2[1]) codingScore++;
+            if (codingAnswers.task3_part1 === codingAnswersCheck.task3[0] && 
+                codingAnswers.task3_part2 === codingAnswersCheck.task3[1]) codingScore++;
+            
+            const totalScore = score + codingScore;
+            const totalQuestions = totalMCQ + 3;
+            
+            // Prepare data for submission
+            const formData = {
+                name,
+                email,
+                timestamp: new Date().toISOString(),
+                mcqAnswers,
+                codingAnswers,
+                score: totalScore,
+                maxScore: totalQuestions
+            };
+            
+            // Submit to Google Apps Script
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                // Display result to user
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = `You scored ${totalScore} out of ${totalQuestions}!`;
+                
+                if (totalScore === totalQuestions) {
+                    resultDiv.classList.add('correct');
+                    resultDiv.textContent += ' Perfect! 🎉';
+                } else if (totalScore >= totalQuestions * 0.7) {
+                    resultDiv.classList.add('correct');
+                    resultDiv.textContent += ' Good job! 👍';
+                } else {
+                    resultDiv.classList.add('incorrect');
+                    resultDiv.textContent += ' Keep practicing! 💪';
+                }
+                
+                // Highlight correct/incorrect answers
+                highlightAnswers();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error submitting your quiz. Please try again.');
+            });
+        });
+        
+        function highlightAnswers() {
+            // Highlight MCQ answers
+            const answers = {
+                q1: 'C', q2: 'B', q3: 'C', q4: 'B', q5: 'B',
+                q6: 'D', q7: 'B', q8: 'B', q9: 'C', q10: 'D'
+            };
+            
+            for (let i = 1; i <= 10; i++) {
+                const correctOption = document.querySelector(`input[name="q${i}"][value="${answers[`q${i}`]}"]`);
+                if (correctOption) {
+                    correctOption.parentElement.style.color = 'var(--correct)';
+                    correctOption.parentElement.style.fontWeight = 'bold';
+                }
+                
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected && selected.value !== answers[`q${i}`]) {
+                    selected.parentElement.style.color = 'var(--incorrect)';
+                }
+            }
+            
+            // Highlight coding answers
+            const blanks = document.querySelectorAll('.blank');
+            const codingAnswers = {
+                task1: 'name',
+                task2: 'color',
+                task3a: 'Tk',
+                task3b: 'mainloop'
+            };
+            
+            if (blanks[0].textContent.trim() === codingAnswers.task1) {
+                blanks[0].classList.add('correct');
+            } else {
+                blanks[0].classList.add('incorrect');
+            }
+            
+            if (blanks[1].textContent.trim() === codingAnswers.task2 && 
+                blanks[2].textContent.trim() === codingAnswers.task2) {
+                blanks[1].classList.add('correct');
+                blanks[2].classList.add('correct');
+            } else {
+                blanks[1].classList.add('incorrect');
+                blanks[2].classList.add('incorrect');
+            }
+            
+            if (blanks[3].textContent.trim() === codingAnswers.task3a && 
+                blanks[4].textContent.trim() === codingAnswers.task3b) {
+                blanks[3].classList.add('correct');
+                blanks[4].classList.add('correct');
+            } else {
+                blanks[3].classList.add('incorrect');
+                blanks[4].classList.add('incorrect');
+            }
+        }
+    </script>
+</body>
+</html>
